@@ -24,7 +24,7 @@ jobs:
         run: npm install --legacy-peer-deps
         
       - name: Build
-        run: npm run pages:build
+        run: npm run worker:build
         env:
           NODE_ENV: production
       
