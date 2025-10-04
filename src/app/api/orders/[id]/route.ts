@@ -3,6 +3,8 @@ import { db } from '@/lib/db';
 import { orders, services, orderAttachments } from '@/drizzle/schema';
 import { eq } from 'drizzle-orm';
 
+export const runtime = 'edge';
+
 // 获取订单详情
 export async function GET(
   request: NextRequest,

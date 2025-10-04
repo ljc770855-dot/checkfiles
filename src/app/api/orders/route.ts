@@ -4,6 +4,8 @@ import { orders, orderAttachments } from '@/drizzle/schema';
 import { getRequestContext } from '@cloudflare/next-on-pages';
 import { withAuth } from '@/lib/middleware';
 
+export const runtime = 'edge';
+
 export const POST = withAuth(async (request: NextRequest, userId: number) => {
   try {
     const formData = await request.formData();

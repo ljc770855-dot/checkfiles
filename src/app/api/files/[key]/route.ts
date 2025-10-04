@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getRequestContext } from '@cloudflare/next-on-pages';
 
+export const runtime = 'edge';
+
 // 获取文件（图片下载/预览）
 export async function GET(
   request: NextRequest,

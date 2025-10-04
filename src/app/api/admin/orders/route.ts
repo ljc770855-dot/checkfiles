@@ -4,6 +4,8 @@ import { orders, services, users, orderAttachments } from '@/drizzle/schema';
 import { eq } from 'drizzle-orm';
 import { withAuth } from '@/lib/middleware';
 
+export const runtime = 'edge';
+
 // TODO: 添加管理员权限验证
 // 当前简化版本，所有认证用户都可以访问
 // 生产环境需要在 users 表添加 role 字段并验证

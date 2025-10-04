@@ -5,6 +5,8 @@ import { eq } from 'drizzle-orm';
 import { compare } from 'bcrypt-ts';
 import { generateToken } from '@/lib/auth';
 
+export const runtime = 'edge';
+
 interface LoginRequestBody {
   email?: string;
   password?: string;

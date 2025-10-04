@@ -4,6 +4,8 @@ import { orders, services, orderAttachments } from '@/drizzle/schema';
 import { eq } from 'drizzle-orm';
 import { withAuth } from '@/lib/middleware';
 
+export const runtime = 'edge';
+
 // 获取用户订单列表
 export const GET = withAuth(async (request: NextRequest, userId: number) => {
   try {
