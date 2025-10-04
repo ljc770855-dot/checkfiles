@@ -6,11 +6,12 @@ export const runtime = 'edge';
 // 获取文件（图片下载/预览）
 export async function GET(
   request: NextRequest,
-  { params }: { params: { key: string } }
+  { params }: { params: Promise<{ key: string }> }
 ) {
   try {
     const { env } = getRequestContext();
-    const fileKey = decodeURIComponent(params.key);
+    const { key } = await params;
+    const fileKey = decodeURIComponent(key);
 
     // 从 R2 获取文件
     const object = await env.R2.get(fileKey);
