@@ -11,7 +11,7 @@ export const runtime = 'edge';
 // 生产环境需要在 users 表添加 role 字段并验证
 
 // 获取所有订单（管理员）
-export const GET = withAuth(async (request: NextRequest, _userId: number) => {
+export const GET = withAuth(async (request: NextRequest) => {
   try {
     // TODO: 验证用户是否为管理员
     // const user = await db().select().from(users).where(eq(users.id, userId)).get();

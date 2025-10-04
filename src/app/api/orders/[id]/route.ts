@@ -8,7 +8,7 @@ export const runtime = 'edge';
 // 获取订单详情
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // 验证认证
@@ -27,7 +27,8 @@ export async function GET(
     }
 
     const userId = payload.userId;
-    const orderId = parseInt(params.id);
+    const { id } = await params;
+    const orderId = parseInt(id);
 
     if (isNaN(orderId)) {
       return NextResponse.json({ error: 'Invalid order ID' }, { status: 400 });
