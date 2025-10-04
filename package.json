@@ -7,7 +7,7 @@
 		"build": "next build",
 		"start": "next start",
 		"lint": "next lint",
-		"worker:build": "npx @cloudflare/next-on-pages --experimental-minify",
+		"worker:build": "npx @cloudflare/next-on-pages",
 		"preview": "npm run worker:build && wrangler dev",
 		"deploy": "npm run worker:build && wrangler deploy",
 		"cf-typegen": "wrangler types --env-interface CloudflareEnv ./cloudflare-env.d.ts",
