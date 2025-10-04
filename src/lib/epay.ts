@@ -101,11 +101,22 @@ export async function createPayment(
   }
 }
 
+export interface EpayQueryResponse {
+  code: number;
+  msg: string;
+  data?: {
+    trade_no: string;
+    out_trade_no: string;
+    status: string;
+    money: string;
+  };
+}
+
 // 查询订单状态
 export async function queryOrder(
   config: EpayConfig,
   orderId: string
-): Promise<any> {
+): Promise<EpayQueryResponse> {
   const params: Record<string, string> = {
     pid: config.pid,
     out_trade_no: orderId,

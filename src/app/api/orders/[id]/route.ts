@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { orders, services, orderAttachments, users } from '@/drizzle/schema';
+import { orders, services, orderAttachments } from '@/drizzle/schema';
 import { eq } from 'drizzle-orm';
-import { withAuth } from '@/lib/middleware';
 
 export const runtime = 'edge';
 

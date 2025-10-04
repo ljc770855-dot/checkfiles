@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { orders } from '@/drizzle/schema';
 import { eq } from 'drizzle-orm';
-import { withAuth } from '@/lib/middleware';
 
 export const runtime = 'edge';
 
@@ -55,7 +54,11 @@ export async function PATCH(
     }
 
     // 更新订单
-    const updateData: any = {
+    const updateData: {
+      updatedAt: Date;
+      status?: string;
+      notes?: string;
+    } = {
       updatedAt: new Date(),
     };
 
