@@ -5,11 +5,15 @@
 {
 	"$schema": "node_modules/wrangler/config-schema.json",
 	"name": "checkfiles",
-	"main": ".worker-next/index.mjs",
+	"main": ".vercel/output/static/_worker.js",
 	"compatibility_date": "2024-10-01",
 	"compatibility_flags": [
 		"nodejs_compat"
 	],
+	"assets": {
+		"directory": ".vercel/output/static",
+		"binding": "ASSETS"
+	},
 	"observability": {
 		"enabled": true
 	},
