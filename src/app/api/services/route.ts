@@ -2,8 +2,6 @@ import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { services as servicesTable } from '@/drizzle/schema';
 
-export const runtime = 'edge';
-
 export async function GET() {
   try {
     const services = await db().select().from(servicesTable).all();

@@ -24,24 +24,8 @@ jobs:
         run: npm install --legacy-peer-deps
         
       - name: Build
-        run: npm run worker:build
-        env:
-          NODE_ENV: production
-      
-      - name: Create .assetsignore
-        run: |
-          echo "_worker.js" > .vercel/output/static/.assetsignore
-          echo "_worker.js.map" >> .vercel/output/static/.assetsignore
-      
-      - name: Create Pages project if not exists
-        continue-on-error: true
-        run: npx wrangler pages project create checkfiles --production-branch=main
+        run: npm run deploy
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-      
-      - name: Deploy to Cloudflare
-        run: npx wrangler pages deploy .vercel/output/static --project-name=checkfiles --commit-dirty=true
-        env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}

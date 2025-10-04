@@ -3,8 +3,6 @@ import { db } from '@/lib/db';
 import { orders } from '@/drizzle/schema';
 import { eq } from 'drizzle-orm';
 
-export const runtime = 'edge';
-
 // 更新订单状态（管理员）
 export async function PATCH(
   request: NextRequest,
