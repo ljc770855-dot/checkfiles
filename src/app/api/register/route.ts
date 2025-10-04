@@ -4,8 +4,6 @@ import { users } from '@/drizzle/schema';
 import { hash } from 'bcrypt-ts';
 import { generateToken } from '@/lib/auth';
 
-export const runtime = 'edge';
-
 interface RegisterRequestBody {
   email?: string;
   password?: string;

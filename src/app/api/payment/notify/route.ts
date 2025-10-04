@@ -5,8 +5,6 @@ import { orders } from '@/drizzle/schema';
 import { eq } from 'drizzle-orm';
 import { verifySign } from '@/lib/epay';
 
-export const runtime = 'edge';
-
 // 支付回调处理（易支付异步通知）
 export async function POST(request: NextRequest) {
   try {

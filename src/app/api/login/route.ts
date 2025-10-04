@@ -1,17 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { users } from '@/drizzle/schema';
-import { compare } from 'bcrypt-ts';
 import { eq } from 'drizzle-orm';
+import { compare } from 'bcrypt-ts';
 import { generateToken } from '@/lib/auth';
-
-export const runtime = 'edge';
 
 interface LoginRequestBody {
   email?: string;
   password?: string;
 }
-
 export async function POST(request: NextRequest) {
   try {
     const { email, password } = (await request.json()) as LoginRequestBody;

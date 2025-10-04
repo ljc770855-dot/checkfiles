@@ -6,8 +6,6 @@ import { eq } from 'drizzle-orm';
 import { withAuth } from '@/lib/middleware';
 import { createPayment, type EpayConfig } from '@/lib/epay';
 
-export const runtime = 'edge';
-
 // 创建支付订单
 export const POST = withAuth(async (request: NextRequest, userId: number) => {
   try {
