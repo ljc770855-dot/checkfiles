@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>委托查询平台 - 客户端演示</title>
+    <!-- 引入 Tailwind CSS 框架 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        /* 确保页面内容不被底栏遮挡 */
+        body { padding-bottom: 4rem; } 
+        /* 基础样式 */
+        .page-content { display: none; }
+        .active-page { display: block; }
+        .active-tab { color: #2563eb; } /* Blue-600 */
+        
+        /* 使可编辑简介更容易被发现 */
+        #platform-intro:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px #93c5fd; /* blue-300 ring */
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen font-sans">
+    
+    <!-- 1. 主内容区域 -->
+    <main id="app-content" class="pb-16 pt-2 max-w-xl mx-auto min-h-screen">
+        
+        <!-- 1.1 首页 (Home) - 包含 Landing/Login 和 Service List 两个视图 -->
+        <div id="home" class="page-content active-page p-4">
+            
+            <!-- NEW: 落地页/登录视图 (Landing/Login View) -->
+            <div id="landing-login-view" class="flex flex-col items-center justify-center min-h-[70vh] text-center pt-10 pb-10">
+                <!-- 平台 Logo 和名称 -->
+                <div class="flex items-center space-x-3 mb-6">
+                    <!-- 模拟“天眼查”Logo - 采用红色图标 -->
+                    <svg class="w-12 h-12 text-red-600" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
+                    </svg>
+                    <span class="text-4xl font-extrabold text-gray-800">天眼查</span>
+                </div>
+                
+                <!-- 可编辑简介 -->
+                <p id="platform-intro" contenteditable="true" class="text-gray-600 mb-8 max-w-sm p-2 border border-dashed border-transparent hover:border-gray-300 rounded-lg cursor-pointer transition duration-200">
+                    我们致力于提供权威、高效的商业及个人信息查询服务。**点击此处编辑简介。**
+                </p>
+
+                <!-- 登录/注册表单模拟 -->
+                <div class="w-full max-w-sm space-y-4">
+                    <h2 class="text-xl font-bold text-gray-700">用户登录 / 注册</h2>
+                    
+                    <div>
+                        <input type="email" id="login-email" placeholder="输入您的邮箱 (用于接收报告)" required
+                               class="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                        <!-- 浅灰色字体提示 -->
+                        <p class="text-xs text-gray-400 mt-1 text-left px-1">
+                            请使用邮箱注册，查询好的资料将以邮件形式发送给您。
+                        </p>
+                    </div>
+
+                    <input type="password" id="login-password" placeholder="输入密码" required
+                           class="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                    
+                    <button onclick="simulateLogin()" class="w-full py-3 bg-blue-600 text-white font-bold rounded-lg shadow-md hover:bg-blue-700 transition duration-150">
+                        登入
+                    </button>
+                    <button onclick="simulateRegister()" class="w-full py-3 bg-green-500 text-white font-bold rounded-lg shadow-md hover:bg-green-600 transition duration-150">
+                        注册 (新用户)
+                    </button>
+                    <div id="login-message" class="hidden text-sm p-3 rounded-lg text-center font-medium"></div>
+                </div>
+            </div>
+
+            <!-- OLD: 服务列表视图 (Service Listing View) - 默认隐藏 -->
+            <div id="service-list-view" class="hidden">
+                <h1 class="text-2xl font-bold mb-4">精选委托查询项目</h1>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    
+                    <!-- 模拟项目卡片 1 -->
+                    <button onclick="navigate('detail-1')" class="text-left bg-white rounded-lg shadow-md overflow-hidden transition duration-300 hover:shadow-xl focus:ring-4 focus:ring-blue-300">
+                        <img src="https://placehold.co/400x200/4f46e5/ffffff?text=项目图片" alt="项目A" class="w-full h-40 object-cover">
+                        <div class="p-3">
+                            <h2 class="text-lg font-semibold truncate">高精度商业背景调查</h2>
+                            <div class="flex justify-between items-center mt-1">
+                                <p class="text-xl font-bold text-red-600">¥ 999.00</p>
+                                <span class="bg-blue-500 text-white text-sm px-3 py-1 rounded-full">查看详情</span>
+                            </div>
+                        </div>
+                    </button>
+
+                    <!-- 模拟项目卡片 2 -->
+                    <button onclick="navigate('detail-2')" class="text-left bg-white rounded-lg shadow-md overflow-hidden transition duration-300 hover:shadow-xl focus:ring-4 focus:ring-blue-300">
+                        <img src="https://placehold.co/400x200/10b981/ffffff?text=项目图片" alt="项目B" class="w-full h-40 object-cover">
+                        <div class="p-3">
+                            <h2 class="text-lg font-semibold truncate">个人资产核实服务</h2>
+                            <div class="flex justify-between items-center mt-1">
+                                <p class="text-xl font-bold text-red-600">¥ 1200.00</p>
+                                <span class="bg-blue-500 text-white text-sm px-3 py-1 rounded-full">查看详情</span>
+                            </div>
+                        </div>
+                    </button>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- 1.2 订单/项目详情页 (Detail 1) -->
+        <div id="detail-1" class="page-content p-4 bg-white">
+            <button onclick="navigate('home')" class="mb-3 text-blue-600 font-medium flex items-center">
+                <!-- 返回箭头 SVG -->
+                <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                返回首页
+            </button>
+            <img src="https://placehold.co/400x200/4f46e5/ffffff?text=项目图片" alt="项目名称" class="w-full h-64 object-cover rounded-lg mb-4">
+            <h1 class="text-3xl font-bold mb-2">高精度商业背景调查</h1>
+            <p class="text-2xl font-semibold text-red-600 mb-4">¥ 999.00</p>
+            
+            <h2 class="text-xl font-semibold border-b pb-1 mb-3">项目介绍</h2>
+            <p class="text-gray-600 mb-6">提供目标企业或个人的全面背景报告，包括工商信息、诉讼记录和信用评分。此服务需要您提供相应的授权文件，请在下方表格中上传...</p>
+
+            <!-- 下单表单 -->
+            <form id="orderForm" class="space-y-4" onsubmit="handleOrderSubmit(event)">
+                <h2 class="text-xl font-semibold border-b pb-1 mb-4">提交委托信息</h2>
+                
+                <!-- 1. 个人信息输入 -->
+                <div>
+                    <label for="name" class="block text-sm font-medium text-gray-700">您的姓名</label>
+                    <input type="text" id="order-name" name="name" placeholder="请输入您的真实姓名" required
+                           class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-3 focus:ring-blue-500 focus:border-blue-500">
+                </div>
+
+                <div>
+                    <label for="contact" class="block text-sm font-medium text-gray-700">联系方式</label>
+                    <input type="text" id="order-contact" name="contact" placeholder="以便我们及时与您联系" required
+                           class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-3 focus:ring-blue-500 focus:border-blue-500">
+                </div>
+                
+                <!-- 新增：备注文本框 -->
+                <div>
+                    <label for="notes" class="block text-sm font-medium text-gray-700">备注/特殊要求</label>
+                    <textarea id="notes" name="notes" rows="3" placeholder="填写您希望我们关注的重点信息"
+                           class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-3 focus:ring-blue-500 focus:border-blue-500"></textarea>
+                </div>
+
+                <!-- 2. 上传证件/图片 -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">上传证件或相关图片</label>
+                    <div class="border-2 border-dashed border-gray-300 p-4 rounded-lg text-center cursor-pointer hover:border-blue-500 transition">
+                        <input type="file" multiple accept="image/*" class="hidden" id="file-upload" onchange="previewImages(event)">
+                        <label for="file-upload" class="flex flex-col items-center justify-center space-y-2">
+                            <!-- Upload Icon SVG -->
+                            <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+                            <p class="text-sm text-gray-500">点击上传或拖拽文件到此区域</p>
+                        </label>
+                    </div>
+                    
+                    <!-- 图片预览区 -->
+                    <div id="image-preview" class="mt-3 grid grid-cols-3 gap-2">
+                        <!-- 预览图会通过 JS 动态插入这里 -->
+                    </div>
+                </div>
+                
+                <!-- 3. 下单按钮 -->
+                <button type="submit" id="submit-button" class="w-full py-3 bg-green-600 text-white font-bold rounded-lg shadow-md hover:bg-green-700 transition duration-150">
+                    确认下单并提交资料
+                </button>
+
+                <!-- 消息提示框 (Toast) -->
+                <div id="order-message" class="hidden p-3 rounded-lg text-sm text-green-700 bg-green-100 border border-green-300">
+                    <!-- 成功信息会显示在这里 -->
+                </div>
+            </form>
+        </div>
+
+        <!-- 1.2 订单/项目详情页 (Detail 2 Placeholder) -->
+        <div id="detail-2" class="page-content p-4 bg-white">
+            <!-- Content initialized by JS on DOMContentLoaded -->
+        </div>
+
+        <!-- 1.3 订单页面 (Orders) -->
+        <div id="orders" class="page-content p-4">
+            <h1 class="text-2xl font-bold mb-4">我的委托订单</h1>
+            <div id="order-list" class="space-y-3">
+                
+                <!-- 订单 1 (Processing) -->
+                <div class="bg-white p-4 rounded-xl shadow-md flex justify-between items-center">
+                    <div>
+                        <p class="font-semibold text-gray-800">#1025 - 商业背景调查</p>
+                        <p class="text-xs text-gray-500">下单时间: 2025-10-02 10:00</p>
+                    </div>
+                    <span class="px-3 py-1 text-xs font-bold text-yellow-800 bg-yellow-200 rounded-full">处理中</span>
+                </div>
+                
+                <!-- 订单 2 (Completed) -->
+                <div class="bg-white p-4 rounded-xl shadow-md flex justify-between items-center">
+                    <div>
+                        <p class="font-semibold text-gray-800">#1024 - 资产核实服务</p>
+                        <p class="text-xs text-gray-500">下单时间: 2025-10-01 14:12</p>
+                    </div>
+                    <span class="px-3 py-1 text-xs font-bold text-green-800 bg-green-200 rounded-full">已完成</span>
+                </div>
+                
+                <p id="new-order-placeholder" class="text-gray-500 text-center pt-8">新订单将显示在此处...</p>
+            </div>
+        </div>
+
+        <!-- 1.4 我的页面 (Profile) - 复用您上次的代码结构 -->
+        <div id="profile" class="page-content p-4">
+            <h1 class="sr-only">我的账户</h1>
+            <!-- 头部：用户资料卡片 -->
+            <div class="bg-white p-6 rounded-xl shadow-lg flex items-center mb-6">
+                <img src="https://placehold.co/80x80/2563eb/ffffff?text=U" alt="用户头像" class="w-20 h-20 rounded-full border-4 border-blue-100 object-cover mr-4">
+                <div>
+                    <h1 class="text-2xl font-bold text-gray-800">Hi, 委托人_001</h1>
+                    <p class="text-sm text-gray-500">用户ID: <span id="user-id" class="font-mono text-xs">A7B2C-D4E5F-G6H8J</span></p>
+                    <button class="mt-2 text-blue-600 hover:text-blue-800 text-sm font-medium transition duration-150" onclick="simulateLogout()">
+                        安全登出
+                    </button>
+                </div>
+            </div>
+
+            <!-- 统计面板 -->
+            <div class="grid grid-cols-3 gap-3 mb-6">
+                
+                <div class="bg-white p-4 rounded-xl shadow-md text-center">
+                    <p id="total-orders" class="text-3xl font-extrabold text-blue-600">12</p>
+                    <p class="text-xs text-gray-500 mt-1">总订单数</p>
+                </div>
+
+                <div class="bg-white p-4 rounded-xl shadow-md text-center">
+                    <p class="text-3xl font-extrabold text-green-600">¥ 8,888</p>
+                    <p class="text-xs text-gray-500 mt-1">累计消费</p>
+                </div>
+
+                <div class="bg-white p-4 rounded-xl shadow-md text-center">
+                    <p class="text-3xl font-extrabold text-yellow-600">2</p>
+                    <p class="text-xs text-gray-500 mt-1">待处理</p>
+                </div>
+            </div>
+
+            <!-- 快捷操作列表 -->
+            <h2 class="text-lg font-semibold text-gray-700 mb-3 ml-2">我的服务</h2>
+            <div class="bg-white rounded-xl shadow-lg divide-y divide-gray-100">
+                
+                <button onclick="navigate('orders')" class="w-full flex justify-between items-center p-4 hover:bg-gray-50 transition duration-150">
+                    <div class="flex items-center">
+                        <span class="text-xl mr-3 text-blue-500">📜</span>
+                        <span class="font-medium text-gray-800">全部订单记录</span>
+                    </div>
+                    <span class="text-gray-400"> > </span>
+                </button>
+
+                <div class="flex justify-between items-center p-4">
+                    <div class="flex items-center">
+                        <span class="text-xl mr-3 text-green-500">💸</span>
+                        <span class="font-medium text-gray-800">消费明细 / 账单</span>
+                    </div>
+                    <span class="text-gray-400"> > </span>
+                </div>
+
+                <button onclick="navigate('support')" class="w-full flex justify-between items-center p-4 hover:bg-gray-50 transition duration-150">
+                    <div class="flex items-center">
+                        <span class="text-xl mr-3 text-red-500">❓</span>
+                        <span class="font-medium text-gray-800">联系客服与帮助</span>
+                    </div>
+                    <span class="text-gray-400"> > </span>
+                </button>
+                
+                <div class="flex justify-between items-center p-4">
+                    <div class="flex items-center">
+                        <span class="text-xl mr-3 text-yellow-500"⚙️</span>
+                        <span class="font-medium text-gray-800">账户与安全设置</span>
+                    </div>
+                    <span class="text-gray-400"> > </span>
+                </div>
+                
+            </div>
+            
+            <!-- 登出按钮 (已移除，移至资料卡片) -->
+            <div class="mt-8 hidden">
+                <button class="w-full py-3 bg-white text-red-500 border border-red-300 rounded-xl font-bold shadow-md hover:bg-red-50 transition duration-150">
+                    安全登出
+                </button>
+            </div>
+        </div>
+
+        <!-- 1.5 客服页面 (Support) -->
+        <div id="support" class="page-content p-4">
+            <h1 class="text-2xl font-bold mb-6">联系客服</h1>
+            <div class="bg-white p-6 rounded-xl shadow-lg space-y-4">
+                <p class="text-gray-600 mb-4">您可以选择以下方式联系我们的专属客服，我们将尽快为您解决问题。</p>
+                
+                <!-- Telegram 客服入口 -->
+                <a href="#" class="flex items-center p-3 border border-gray-200 rounded-lg hover:bg-blue-50 transition" target="_blank">
+                    <img src="https://placehold.co/40x40/0088cc/ffffff?text=TG" alt="Telegram Icon" class="w-10 h-10 rounded-full mr-4">
+                    <div>
+                        <p class="font-medium text-gray-800">Telegram 实时聊天</p>
+                        <p class="text-sm text-gray-500">推荐：响应速度最快</p>
+                    </div>
+                </a>
+
+                <!-- WhatsApp 客服入口 -->
+                <a href="#" class="flex items-center p-3 border border-gray-200 rounded-lg hover:bg-green-50 transition" target="_blank">
+                    <img src="https://placehold.co/40x40/25d366/ffffff?text=WA" alt="WhatsApp Icon" class="w-10 h-10 rounded-full mr-4">
+                    <div>
+                        <p class="font-medium text-gray-800">WhatsApp 专线</p>
+                        <p class="text-sm text-gray-500">支持语音和文件传输</p>
+                    </div>
+                </a>
+
+                <!-- 内置表单 -->
+                <div class="pt-4 border-t mt-4">
+                    <p class="font-medium text-gray-800 mb-2">或提交工单</p>
+                    <textarea class="w-full border border-gray-300 rounded-md p-2 focus:ring-blue-500 focus:border-blue-500" rows="4" placeholder="请输入您的问题或建议..."></textarea>
+                    <button class="mt-3 w-full py-2 bg-blue-500 text-white font-medium rounded-lg hover:bg-blue-600 transition duration-150">
+                        提交工单
+                    </button>
+                </div>
+
+            </div>
+        </div>
+
+    </main>
+
+    <!-- 2. 固定底栏导航 (Tab Bar) -->
+    <nav class="fixed bottom-0 left-0 right-0 h-16 bg-white border-t border-gray-200 z-50 shadow-2xl">
+        <div class="flex justify-around items-center h-full max-w-xl mx-auto">
+            
+            <!-- 首页按钮 -->
+            <button id="tab-home" onclick="navigate('home')" class="tab-button flex flex-col items-center text-sm font-medium active-tab">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/></svg>
+                <span>首页</span>
+            </button>
+
+            <!-- 订单按钮 -->
+            <button id="tab-orders" onclick="navigate('orders')" class="tab-button flex flex-col items-center text-sm font-medium text-gray-500 hover:text-blue-600">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                <span>订单</span>
+            </button>
+
+            <!-- 我的按钮 -->
+            <button id="tab-profile" onclick="navigate('profile')" class="tab-button flex flex-col items-center text-sm font-medium text-gray-500 hover:text-blue-600">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                <span>我的</span>
+            </button>
+
+            <!-- 客服按钮 -->
+            <button id="tab-support" onclick="navigate('support')" class="tab-button flex flex-col items-center text-sm font-medium text-gray-500 hover:text-blue-600">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M18 10c0 3.866-3.582 7-8 7a8.958 8.958 0 01-2.94-.465l-2.91 1.558a1 1 0 01-1.432-1.096l.855-3.02a8 8 0 01-2.5-5.997C2 6.134 5.582 3 10 3s8 3.134 8 7z"/></svg>
+                <span>客服</span>
+            </button>
+        </div>
+    </nav>
+    
+    <script>
+        let currentView = 'home';
+        let orderCount = 1025; // 模拟订单 ID
+        let isLoggedIn = false; // NEW: 模拟登录状态
+        
+        // --- 登录状态更新和 Home 视图切换 ---
+        async function updateHomeView() {
+            const landingView = document.getElementById('landing-login-view');
+            const serviceListView = document.getElementById('service-list-view');
+            
+            if (isLoggedIn) {
+                landingView.classList.add('hidden');
+                serviceListView.classList.remove('hidden');
+
+                try {
+                    const response = await fetch('/api/services');
+                    const result = await response.json();
+                    
+                    if (!result.success) {
+                        throw new Error(result.error || 'Failed to fetch services');
+                    }
+                    
+                    const services = result.data;
+                    const serviceGrid = serviceListView.querySelector('.grid');
+                    serviceGrid.innerHTML = ''; // 清空现有内容
+
+                    services.forEach(service => {
+                        const card = document.createElement('button');
+                        card.className = 'text-left bg-white rounded-lg shadow-md overflow-hidden transition duration-300 hover:shadow-xl focus:ring-4 focus:ring-blue-300';
+                        card.onclick = () => navigate(`detail-${service.id}`);
+                        card.innerHTML = `
+                            <img src="${service.imageUrl}" alt="${service.name}" class="w-full h-40 object-cover">
+                            <div class="p-3">
+                                <h2 class="text-lg font-semibold truncate">${service.name}</h2>
+                                <div class="flex justify-between items-center mt-1">
+                                    <p class="text-xl font-bold text-red-600">¥ ${service.price.toFixed(2)}</p>
+                                    <span class="bg-blue-500 text-white text-sm px-3 py-1 rounded-full">查看详情</span>
+                                </div>
+                            </div>
+                        `;
+                        serviceGrid.appendChild(card);
+                    });
+                } catch (error) {
+                    console.error('Error fetching services:', error);
+                    serviceListView.querySelector('.grid').innerHTML = '<p class="text-red-500">加载服务列表失败。</p>';
+                }
+            } else {
+                landingView.classList.remove('hidden');
+                serviceListView.classList.add('hidden');
+            }
+        }
+
+        // --- 模拟登录/注册操作 ---
+        function showLoginMessage(message, isSuccess = true) {
+            const msgBox = document.getElementById('login-message');
+            msgBox.innerText = message;
+            msgBox.classList.remove('hidden', 'text-green-700', 'bg-green-100', 'text-red-700', 'bg-red-100');
+            if (isSuccess) {
+                msgBox.classList.add('text-green-700', 'bg-green-100');
+            } else {
+                msgBox.classList.add('text-red-700', 'bg-red-100');
+            }
+            setTimeout(() => { msgBox.classList.add('hidden'); }, 3000);
+        }
+
+        async function simulateLogin() {
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+
+            if (!email || !password || !email.includes('@')) {
+                showLoginMessage("请输入有效的邮箱和密码。", false);
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ email, password }),
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    // 保存token到localStorage
+                    if (data.token) {
+                        localStorage.setItem('authToken', data.token);
+                        localStorage.setItem('userInfo', JSON.stringify(data.user));
+                    }
+                    
+                    isLoggedIn = true;
+                    updateHomeView();
+                    navigate('home');
+                    showLoginMessage("登入成功！欢迎回来。", true);
+                } else {
+                    showLoginMessage(`登录失败: ${data.error}`, false);
+                }
+            } catch (error) {
+                console.error('Login fetch error:', error);
+                showLoginMessage('登录时发生网络错误，请稍后再试。', false);
+            }
+        }
+
+        async function simulateRegister() {
+            const emailInput = document.getElementById('login-email');
+            const passwordInput = document.getElementById('login-password');
+            const email = emailInput.value;
+            const password = passwordInput.value;
+
+            if (!email || !password || !email.includes('@')) {
+                showLoginMessage("请输入有效的邮箱和密码。", false);
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ email, password }),
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    // 保存token到localStorage
+                    if (data.token) {
+                        localStorage.setItem('authToken', data.token);
+                        localStorage.setItem('userInfo', JSON.stringify(data.user));
+                    }
+                    
+                    showLoginMessage('注册成功！已自动登录。', true);
+                    emailInput.value = '';
+                    passwordInput.value = '';
+                    
+                    // 自动登录
+                    isLoggedIn = true;
+                    updateHomeView();
+                    navigate('home');
+                } else {
+                    showLoginMessage(`注册失败: ${data.error}`, false);
+                }
+            } catch (error) {
+                console.error('Registration fetch error:', error);
+                showLoginMessage('注册时发生网络错误，请稍后再试。', false);
+            }
+        }
+        
+        function simulateLogout() {
+            // 清除本地存储的认证信息
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('userInfo');
+            
+            isLoggedIn = false;
+            updateHomeView();
+            navigate('home');
+            showLoginMessage("已安全登出。", false);
+        }
+        
+        // --- 路由和视图切换 ---
+        function navigate(viewId) {
+            // 隐藏所有内容区域
+            document.querySelectorAll('.page-content').forEach(el => {
+                el.classList.remove('active-page');
+            });
+            // 隐藏所有详情页（除了当前要显示的）
+            if (!viewId.startsWith('detail-')) {
+                document.getElementById('detail-1').classList.remove('active-page');
+                const detail2 = document.getElementById('detail-2');
+                if (detail2) {
+                    detail2.classList.remove('active-page');
+                }
+            }
+
+            // 显示目标内容区域
+            const target = document.getElementById(viewId);
+            if (target) {
+                target.classList.add('active-page');
+                currentView = viewId.includes('detail-') ? 'home' : viewId;
+            }
+
+            // 针对 'home' 视图，需要调用 updateHomeView 来处理登录状态
+            if (viewId === 'home') {
+                updateHomeView();
+            }
+
+            // 更新底栏 Tab 样式
+            document.querySelectorAll('.tab-button').forEach(button => {
+                const buttonId = button.id.replace('tab-', '');
+                if (buttonId === currentView) {
+                    button.classList.add('active-tab');
+                    button.classList.remove('text-gray-500');
+                } else {
+                    button.classList.remove('active-tab');
+                    button.classList.add('text-gray-500');
+                }
+            });
+
+            // 确保在详情页时，Home Tab是激活的
+            if (viewId.startsWith('detail-')) {
+                 document.getElementById('tab-home').classList.add('active-tab');
+                 document.getElementById('tab-home').classList.remove('text-gray-500');
+            }
+        }
+
+        // --- 图片上传预览模拟 (保持不变) ---
+        function previewImages(event) {
+            const previewContainer = document.getElementById('image-preview');
+            previewContainer.innerHTML = ''; // 清空现有预览
+            const files = event.target.files;
+
+            if (files.length === 0) return;
+
+            Array.from(files).forEach(file => {
+                if (file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        const imgWrapper = document.createElement('div');
+                        imgWrapper.className = 'relative group';
+                        imgWrapper.innerHTML = `
+                            <img src="${e.target.result}" class="w-full h-24 object-cover rounded-lg border border-gray-200">
+                            <!-- 移除按钮 (模拟) -->
+                            <button class="absolute top-1 right-1 bg-red-500 text-white w-5 h-5 rounded-full text-xs opacity-0 group-hover:opacity-100 transition duration-300">×</button>
+                        `;
+                        previewContainer.appendChild(imgWrapper);
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+        
+        // --- 下单提交模拟 (保持不变) ---
+        async function handleOrderSubmit(event) {
+            event.preventDefault();
+            const form = event.target;
+            const submitButton = document.getElementById('submit-button');
+            const messageBox = document.getElementById('order-message');
+            
+            submitButton.disabled = true;
+            submitButton.innerText = '资料提交中...';
+            submitButton.classList.remove('bg-green-600');
+            submitButton.classList.add('bg-green-400');
+
+            const formData = new FormData();
+            formData.append('name', document.getElementById('order-name').value);
+            formData.append('contact', document.getElementById('order-contact').value);
+            formData.append('notes', document.getElementById('notes').value);
+            
+            const fileInput = document.getElementById('file-upload');
+            for (const file of fileInput.files) {
+                formData.append('files', file);
+            }
+
+            try {
+                const token = localStorage.getItem('authToken');
+                const headers = {};
+                if (token) {
+                    headers['Authorization'] = `Bearer ${token}`;
+                }
+                
+                const response = await fetch('/api/orders', {
+                    method: 'POST',
+                    headers,
+                    body: formData,
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    messageBox.innerText = `✅ 订单 #${data.orderId} 已提交成功！`;
+                    messageBox.classList.remove('hidden');
+                    form.reset();
+                    document.getElementById('image-preview').innerHTML = '';
+                    // 这里可以添加更新订单列表的逻辑
+                } else {
+                    messageBox.innerText = `下单失败: ${data.error}`;
+                    messageBox.classList.remove('hidden');
+                }
+            } catch (error) {
+                console.error('Order submission error:', error);
+                messageBox.innerText = '下单时发生网络错误，请稍后再试。';
+                messageBox.classList.remove('hidden');
+            } finally {
+                submitButton.disabled = false;
+                submitButton.innerText = '确认下单并提交资料';
+                submitButton.classList.add('bg-green-600');
+                submitButton.classList.remove('bg-green-400');
+            }
+        }
+
+        // 页面加载完成后，确保显示 Landing 页面
+        document.addEventListener('DOMContentLoaded', () => {
+            // 检查是否有保存的认证信息
+            const savedToken = localStorage.getItem('authToken');
+            const savedUserInfo = localStorage.getItem('userInfo');
+            
+            if (savedToken && savedUserInfo) {
+                try {
+                    const userInfo = JSON.parse(savedUserInfo);
+                    isLoggedIn = true;
+                    console.log('用户已登录:', userInfo.email);
+                } catch (error) {
+                    console.error('解析用户信息失败:', error);
+                    localStorage.removeItem('authToken');
+                    localStorage.removeItem('userInfo');
+                }
+            }
+            
+            // 初始化 detail-2 页面
+            const detail2El = document.getElementById('detail-2');
+            const detail1Content = document.getElementById('detail-1').innerHTML;
+            
+            if (detail2El) {
+                // 替换图片、名称和价格
+                detail2El.innerHTML = detail1Content.replace(/detail-1/g, 'detail-2').replace(/商业背景调查/g, '个人资产核实服务').replace(/¥ 999.00/g, '¥ 1200.00').replace(/4f46e5/g, '10b981');
+            } else {
+                console.error("Critical Error: detail-2 element is missing.");
+            }
+            
+            // 根据登录状态显示相应视图
+            updateHomeView();
+            navigate('home');
+        });
+    </script>
+</body>
+</html>
