@@ -28,6 +28,11 @@ jobs:
         env:
           NODE_ENV: production
       
+      - name: Create .assetsignore
+        run: |
+          echo "_worker.js" > .vercel/output/static/.assetsignore
+          echo "_worker.js.map" >> .vercel/output/static/.assetsignore
+      
       - name: Create Pages project if not exists
         continue-on-error: true
         run: npx wrangler pages project create checkfiles --production-branch=main
